@@ -91,6 +91,9 @@ public final class VKPinCodeView: UIView {
     
     /// Fires after begin editing.
     public var onBeginEditing: (() -> Void)?
+
+    /// Fires when shake animation is created.
+    public var onShakeAnimationCreated: ((CAKeyframeAnimation) -> Void)?
     
     /// Text input validation. You might be need it if text input is different from digits. You don't need this by default.
     public var validator: PinCodeValidator?
@@ -278,6 +281,7 @@ public final class VKPinCodeView: UIView {
         animation.duration = 0.5
         animation.values = [-15.0, 15.0, -15.0, 15.0, -12.0, 12.0, -10.0, 10.0, 0.0]
         animation.delegate = self
+        onShakeAnimationCreated?(animation)
         layer.add(animation, forKey: "shake")
     }
     
