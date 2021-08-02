@@ -176,6 +176,11 @@ public final class VKPinCodeView: UIView {
         isError = false
     }
     
+    /// Use this method to access internal views: labels for custom animations
+    public func getLabels() -> [UILabel] {
+        return _stack.arrangedSubviews.compactMap { $0 as? UILabel}
+    }
+
     // MARK: Private methods
     
     private func setup() {
