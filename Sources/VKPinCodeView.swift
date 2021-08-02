@@ -54,6 +54,8 @@ public final class VKPinCodeView: UIView {
         didSet { highlightActiveLabel(_activeIndex) }
     }
 
+    public var ignoreUserInput: Bool = false
+
     /// Enable or disable error mode. Default value is false.
     public var isError = false {
 
@@ -324,6 +326,7 @@ extension VKPinCodeView: UITextFieldDelegate {
                    replacementString string: String) -> Bool {
         
         if string.isEmpty { return true }
+        if ignoreUserInput { return false }
         return (validator?(string) ?? true) && _code.count < length
     }
     
