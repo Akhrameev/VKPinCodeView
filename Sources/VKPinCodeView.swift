@@ -20,7 +20,11 @@ private enum InterfaceLayoutDirection {
 
 /// Main container with PIN input items. You can use it in storyboards, nib files or right in the code.
 public final class VKPinCodeView: UIView {
-    
+
+    public enum ActiveIndexStrategy {
+        case firstEmptyOrLast, lastFilledOrFirst, firstEmpty
+    }
+
     private lazy var _stack = UIStackView(frame: bounds)
     
     private lazy var _textField = UITextField(frame: bounds)
@@ -31,12 +35,24 @@ public final class VKPinCodeView: UIView {
     }
     
     private var _activeIndex: Int {
-        
-        return _code.count == 0 ? 0 : _code.count - 1
+
+        let count = _code.count
+        switch activeIndexStrategy {
+        case .lastFilledOrFirst:
+            return count == 0 ? 0 : count - 1
+        case .firstEmptyOrLast:
+            return count == length ? count - 1 : count
+        case .firstEmpty:
+            return count
+        }
     }
 
     private var _layoutDirection: InterfaceLayoutDirection = .ltr
 
+    public var activeIndexStrategy: ActiveIndexStrategy = .lastFilledOrFirst {
+
+        didSet { highlightActiveLabel(_activeIndex) }
+    }
 
     /// Enable or disable error mode. Default value is false.
     public var isError = false {
@@ -205,16 +221,12 @@ public final class VKPinCodeView: UIView {
         if _code.count > text.count {
             
             deleteChar(text)
-            var index = _code.count - 1
-            if index < 0 { index = 0 }
-            highlightActiveLabel(index)
-        }
-        else {
+        } else {
             
             appendChar(text)
-            let index = _code.count - 1
-            highlightActiveLabel(index)
         }
+
+        highlightActiveLabel(_activeIndex)
         
         if _code.count == length {
 
@@ -253,7 +265,8 @@ public final class VKPinCodeView: UIView {
     
     private func turnOffSelectedLabel() {
 
-        let label = _stack.arrangedSubviews[_activeIndex] as! VKLabel
+        guard _activeIndex < _stack.arrangedSubviews.count,
+              let label = _stack.arrangedSubviews[_activeIndex] as? VKLabel else { return }
         label.isSelected = false
     }
     
