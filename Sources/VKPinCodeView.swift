@@ -170,6 +170,7 @@ public final class VKPinCodeView: UIView {
 
     /// Use this method to reset the code
     public func resetCode() {
+        
         _code = ""
         _textField.text = nil
         _stack.arrangedSubviews.forEach({ ($0 as! VKLabel).text = nil })
@@ -178,6 +179,7 @@ public final class VKPinCodeView: UIView {
     
     /// Use this method to access internal views: labels for custom animations
     public func getLabels() -> [UILabel] {
+        
         return _stack.arrangedSubviews.compactMap { $0 as? UILabel}
     }
 
@@ -330,8 +332,8 @@ extension VKPinCodeView: UITextFieldDelegate {
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
         
-        if string.isEmpty { return true }
         if ignoreUserInput { return false }
+        if string.isEmpty { return true }
         return (validator?(string) ?? true) && _code.count < length
     }
     
